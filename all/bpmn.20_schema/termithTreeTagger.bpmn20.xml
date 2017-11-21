@@ -15,22 +15,22 @@
         </dataObject>
 
         <startEvent id="startEvent"/>
-
-        <sequenceFlow id="flow1" sourceRef="startEvent" targetRef="fork" />
-        <parallelGateway id="fork" />
-        <sequenceFlow sourceRef="fork" targetRef="corpusMapper"/>
-        <sequenceFlow sourceRef="fork" targetRef="textExtractor"/>
-
+        <sequenceFlow id="flow0" sourceRef="startEvent" targetRef="specialCharTranslator" />
+    
+        <serviceTask id="specialCharTranslator" name="translate special char not supported by termsuite"
+                     flowable:class="org.atilf.delegate.tools.SpecialCharacterTranslatorDelegate"/>
+    
+        <sequenceFlow id="flow1" sourceRef="specialCharTranslator" targetRef="corpusMapper" />
+        
         <serviceTask id="corpusMapper" name="map corpus to hashMap"
                      flowable:class="org.atilf.delegate.enrichment.initializer.CorpusMapperDelegate"/>
+        
+        <sequenceFlow sourceRef="corpusMapper" targetRef="textExtractor"/>
+        
         <serviceTask id="textExtractor" name="extract text"
                      flowable:class="org.atilf.delegate.enrichment.initializer.TextExtractorDelegate"/>
-
-        <sequenceFlow sourceRef="corpusMapper" targetRef="join"/>
-        <sequenceFlow sourceRef="textExtractor" targetRef="join"/>
-        <parallelGateway id="join"/>
-
-        <sequenceFlow sourceRef="join" targetRef="treeTaggerWorker"/>
+        
+        <sequenceFlow sourceRef="textExtractor" targetRef="treeTaggerWorker"/>
 
         <serviceTask id="treeTaggerWorker" name="treeTagger Json"
                      flowable:class="org.atilf.delegate.enrichment.analyzer.TreeTaggerWorkerDelegate"/>
