@@ -15,17 +15,18 @@
         </dataObject>
 
         <startEvent id="startEvent"/>
-        <sequenceFlow id="flow0" sourceRef="startEvent" targetRef="specialCharTranslator" />
+        <sequenceFlow id="flow0" sourceRef="startEvent" targetRef="corpusMapper" />
+    
+        <serviceTask id="corpusMapper" name="map corpus to hashMap"
+                     flowable:class="org.atilf.delegate.enrichment.initializer.CorpusInitializerDelegate"/>
+    
+        <sequenceFlow id="flow1" sourceRef="corpusMapper" targetRef="specialCharTranslator"/>
     
         <serviceTask id="specialCharTranslator" name="translate special char not supported by termsuite"
                      flowable:class="org.atilf.delegate.tools.SpecialCharacterTranslatorDelegate"/>
     
-        <sequenceFlow id="flow1" sourceRef="specialCharTranslator" targetRef="corpusMapper" />
-        
-        <serviceTask id="corpusMapper" name="map corpus to hashMap"
-                     flowable:class="org.atilf.delegate.enrichment.initializer.CorpusMapperDelegate"/>
-        
-        <sequenceFlow sourceRef="corpusMapper" targetRef="textExtractor"/>
+
+        <sequenceFlow sourceRef="specialCharTranslator" targetRef="textExtractor"/>
         
         <serviceTask id="textExtractor" name="extract text"
                      flowable:class="org.atilf.delegate.enrichment.initializer.TextExtractorDelegate"/>
